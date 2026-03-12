@@ -11,8 +11,10 @@ import (
 var (
 	commands = struct {
 		start string
+		reset string
 	}{
 		start: "start",
+		reset: "reset",
 	}
 
 	keyboard = tgbotapi.NewReplyKeyboard(
@@ -28,6 +30,9 @@ func commandActions(u tgbotapi.Update, msg *tgbotapi.MessageConfig) {
 	case commands.start:
 		msg.Text = "Давай поиграем в игру Камень, ножницы, бумага"
 		msg.ReplyMarkup = keyboard
+	case commands.reset:
+		msg.Text = "Счет сброшен"
+		game.ResetScore(u.Message.Chat.ID)
 	default:
 		msg.Text = "Неизвестная команда"
 	}
@@ -56,8 +61,7 @@ func main() {
 		if update.Message.IsCommand() {
 			commandActions(update, &msg)
 		} else {
-			userMove := update.Message.Text
-			msg.Text = game.GetEndRoundMessage(userMove)
+			msg.Text = game.Game(update.Message)
 		}
 
 		if _, err := bot.Send(msg); err != nil {
