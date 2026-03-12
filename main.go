@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -57,17 +56,8 @@ func main() {
 		if update.Message.IsCommand() {
 			commandActions(update, &msg)
 		} else {
-			botMove := game.MakeMove()
 			userMove := update.Message.Text
-			if !game.IsValidMove(userMove) {
-				msg.Text = "Неверный ход, должно быть одно из слов: Камень, Ножницы, Бумага"
-			} else {
-				msg.Text = fmt.Sprintf(
-					"Мой ход: %s.\nТвой ход: %s.\n%s\n",
-					botMove,
-					userMove,
-					game.FindWinner(botMove, userMove))
-			}
+			msg.Text = game.GetEndRoundMessage(userMove)
 		}
 
 		if _, err := bot.Send(msg); err != nil {

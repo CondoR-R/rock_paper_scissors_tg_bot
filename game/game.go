@@ -1,6 +1,9 @@
 package game
 
-import "math/rand"
+import (
+	"fmt"
+	"math/rand"
+)
 
 var (
 	Moves = struct {
@@ -15,12 +18,12 @@ var (
 	movesArray = [...]string{Moves.Rock, Moves.Paper, Moves.Scissors}
 )
 
-func MakeMove() string {
+func makeMove() string {
 	randIndex := rand.Intn(len(movesArray))
 	return movesArray[randIndex]
 }
 
-func IsValidMove(userMove string) bool {
+func isValidMove(userMove string) bool {
 	for _, move := range movesArray {
 		if move == userMove {
 			return true
@@ -29,7 +32,7 @@ func IsValidMove(userMove string) bool {
 	return false
 }
 
-func FindWinner(botMove, userMove string) string {
+func findWinner(botMove, userMove string) string {
 	if userMove == Moves.Rock && botMove == Moves.Scissors ||
 		userMove == Moves.Scissors && botMove == Moves.Paper ||
 		userMove == Moves.Paper && botMove == Moves.Rock {
@@ -40,4 +43,17 @@ func FindWinner(botMove, userMove string) string {
 		return "Я выиграл! :)"
 	}
 	return "Ого, у нас ничья"
+}
+
+func GetEndRoundMessage(userMove string) string {
+	botMove := makeMove()
+	if !isValidMove(userMove) {
+		return "Неверный ход, должно быть одно из слов: Камень, Ножницы, Бумага"
+	}
+	return fmt.Sprintf(
+		"Мой ход: %s.\nТвой ход: %s.\n%s\n",
+		botMove,
+		userMove,
+		findWinner(botMove, userMove))
+
 }
