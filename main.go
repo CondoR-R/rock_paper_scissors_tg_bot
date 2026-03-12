@@ -25,6 +25,9 @@ var (
 	)
 )
 
+// Процедура обработки команд бота.
+// Принимает update при взаимодействии пользователя с ботом и указатель на заготовку ответного сообщения.
+// В переменную ответного сообщения заносит ответ пользователю.
 func commandActions(u tgbotapi.Update, msg *tgbotapi.MessageConfig) {
 	switch u.Message.Command() {
 	case commands.start:
@@ -38,19 +41,22 @@ func commandActions(u tgbotapi.Update, msg *tgbotapi.MessageConfig) {
 	}
 }
 
-func main() {
+// Инициализация бота при старте программы.
+// Возвращает указатель на бота.
+func initBot() *tgbotapi.BotAPI {
 	bot, err := tgbotapi.NewBotAPI(ApiKey)
 	if err != nil {
 		log.Panic(err)
 	}
-
 	bot.Debug = true
 
-	updateConfig := tgbotapi.NewUpdate(0)
-	updateConfig.Timeout = 30
+	return bot
+}
 
+// Обработка действий пользователя.
+// Принимает бота и конфиг обновлений.
+func messageProcessing(bot *tgbotapi.BotAPI, updateConfig tgbotapi.UpdateConfig) {
 	updates := bot.GetUpdatesChan(updateConfig)
-
 	for update := range updates {
 		if update.Message == nil {
 			continue
@@ -68,4 +74,11 @@ func main() {
 			log.Panic(err)
 		}
 	}
+}
+
+func main() {
+	bot := initBot()
+	updateConfig := tgbotapi.NewUpdate(0)
+	updateConfig.Timeout = 30
+	messageProcessing(bot, updateConfig)
 }
