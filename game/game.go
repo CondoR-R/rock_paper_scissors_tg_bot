@@ -8,9 +8,9 @@ import (
 
 var (
 	Moves movesStruct = movesStruct{
-		Rock:     "Камень",
-		Paper:    "Бумага",
-		Scissors: "Ножницы",
+		Rock:     "🪨 Камень",
+		Paper:    "📄 Бумага",
+		Scissors: "✂️ Ножницы",
 	}
 	movesArray = [...]string{Moves.Rock, Moves.Paper, Moves.Scissors}
 
@@ -40,7 +40,11 @@ func Game(message *tgbotapi.Message) string {
 	userMove := message.Text
 	userId := message.Chat.ID
 	if !isValidMove(userMove) {
-		return "Неверный ход, должно быть одно из слов: Камень, Ножницы, Бумага"
+		message := "Неверный ход! Доступные варианы хода: \n"
+		for _, val := range movesArray {
+			message += val + "\n"
+		}
+		return message
 	}
 	botMove := getMove()
 	w := getWinner(botMove, userMove)

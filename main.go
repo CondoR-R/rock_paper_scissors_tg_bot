@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
@@ -25,6 +25,13 @@ var (
 	)
 )
 
+// Обработка ошибок (просто вывод в терминал)
+func tryCatch() {
+	if r := recover(); r != nil {
+		fmt.Printf("ERROR: %s", r)
+	}
+}
+
 // Процедура обработки команд бота.
 // Принимает update при взаимодействии пользователя с ботом и указатель на заготовку ответного сообщения.
 // В переменную ответного сообщения заносит ответ пользователю.
@@ -46,7 +53,7 @@ func commandActions(u tgbotapi.Update, msg *tgbotapi.MessageConfig) {
 func initBot() *tgbotapi.BotAPI {
 	bot, err := tgbotapi.NewBotAPI(ApiKey)
 	if err != nil {
-		log.Panic(err)
+		panic(err)
 	}
 	bot.Debug = true
 
@@ -71,12 +78,13 @@ func messageProcessing(bot *tgbotapi.BotAPI, updateConfig tgbotapi.UpdateConfig)
 		}
 
 		if _, err := bot.Send(msg); err != nil {
-			log.Panic(err)
+			panic(err)
 		}
 	}
 }
 
 func main() {
+	defer tryCatch()
 	bot := initBot()
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 30
